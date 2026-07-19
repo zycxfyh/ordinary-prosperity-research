@@ -28,14 +28,26 @@ jobs:
 
       - name: Run preliminary CE Y1 estimate
         run: |
+          mkdir -p data/derived/us-ce/round07
+          set +e
           python analysis/us-ce/round07_ce_y1.py \
             --target-year 2023 \
             --download \
             --acknowledge-historical-tenure-codes \
-            --output-dir data/derived/us-ce/round07
+            --output-dir data/derived/us-ce/round07 \
+            2>&1 | tee data/derived/us-ce/round07/execution.log
+          status=${PIPESTATUS[0]}
+          echo "$status" > data/derived/us-ce/round07/exit_status.txt
+          exit 0
 
-      - name: Verify outputs
+      - name: Verify outputs and propagate status
         run: |
+          status=$(cat data/derived/us-ce/round07/exit_status.txt)
+          if [ "$status" -ne 0 ]; then
+            echo "CE estimator failed with status $status"
+            tail -n 120 data/derived/us-ce/round07/execution.log
+            exit "$status"
+          fi
           test -s data/derived/us-ce/round07/source_manifest.json
           test -s data/derived/us-ce/round07/preliminary_y1_estimates.csv
           test -s data/derived/us-ce/round07/audit_log.csv
@@ -57,5 +69,7 @@ jobs:
             data/derived/us-ce/round07/source_manifest.json
             data/derived/us-ce/round07/preliminary_y1_estimates.csv
             data/derived/us-ce/round07/audit_log.csv
+            data/derived/us-ce/round07/execution.log
+            data/derived/us-ce/round07/exit_status.txt
           if-no-files-found: warn
           retention-days: 7
