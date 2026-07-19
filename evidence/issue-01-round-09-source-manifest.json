@@ -1,0 +1,30 @@
+[
+  {
+    "file": "intrvw22.zip",
+    "size_bytes": 47796149,
+    "sha256": "c99a2f47c0084b7a88812b34c56a1a288be2798ff010b2b59dcf87e072773e17",
+    "zip_test": "pass",
+    "member_count": 71
+  },
+  {
+    "file": "intrvw23.zip",
+    "size_bytes": 46493816,
+    "sha256": "97e9a17edeee28e77a3fd5a7d874e5f4b9034222be204e25b0d902f4c82235ac",
+    "zip_test": "pass",
+    "member_count": 72
+  },
+  {
+    "file": "diary22.zip",
+    "size_bytes": 8030362,
+    "sha256": "c285e72fd7513c78caa158c75975c5b03e91049a9ffe9ee6d41966dc4ef20963",
+    "zip_test": "pass",
+    "member_count": 21
+  },
+  {
+    "file": "diary23.zip",
+    "size_bytes": 7700547,
+    "sha256": "d9990b92f4cc6546e3d6d7a1354300ef953ffca412d90cdb41c75372f90b94d6",
+    "zip_test": "pass",
+    "member_count": 21
+  }
+]
