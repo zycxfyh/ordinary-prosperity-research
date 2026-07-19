@@ -26,13 +26,40 @@ jobs:
       - name: Install dependencies
         run: python -m pip install --upgrade pip pandas numpy
 
+      - name: Download official BLS packages
+        run: |
+          mkdir -p data/raw/us-ce data/derived/us-ce/round07
+          ua='Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/150 Safari/537.36 research=https://github.com/zycxfyh/ordinary-prosperity-research'
+          referer='https://www.bls.gov/cex/pumd_data.htm'
+          set +e
+          for yy in 22 23; do
+            curl --fail --location --retry 3 --retry-all-errors \
+              --user-agent "$ua" \
+              --referer "$referer" \
+              --header 'Accept: application/zip,application/octet-stream;q=0.9,*/*;q=0.8' \
+              --output "data/raw/us-ce/intrvw${yy}.zip" \
+              "https://www.bls.gov/cex/pumd/data/csv/intrvw${yy}.zip" \
+              2>&1 | tee -a data/derived/us-ce/round07/download.log
+            status=${PIPESTATUS[0]}
+            if [ "$status" -ne 0 ]; then
+              echo "$status" > data/derived/us-ce/round07/download_exit_status.txt
+              exit 0
+            fi
+          done
+          echo 0 > data/derived/us-ce/round07/download_exit_status.txt
+
       - name: Run preliminary CE Y1 estimate
         run: |
           mkdir -p data/derived/us-ce/round07
+          download_status=$(cat data/derived/us-ce/round07/download_exit_status.txt)
+          if [ "$download_status" -ne 0 ]; then
+            echo "BLS download failed with status $download_status" | tee data/derived/us-ce/round07/execution.log
+            echo "$download_status" > data/derived/us-ce/round07/exit_status.txt
+            exit 0
+          fi
           set +e
           python analysis/us-ce/round07_ce_y1.py \
             --target-year 2023 \
-            --download \
             --acknowledge-historical-tenure-codes \
             --output-dir data/derived/us-ce/round07 \
             2>&1 | tee data/derived/us-ce/round07/execution.log
@@ -45,6 +72,7 @@ jobs:
           status=$(cat data/derived/us-ce/round07/exit_status.txt)
           if [ "$status" -ne 0 ]; then
             echo "CE estimator failed with status $status"
+            cat data/derived/us-ce/round07/download.log || true
             tail -n 120 data/derived/us-ce/round07/execution.log
             exit "$status"
           fi
@@ -69,6 +97,8 @@ jobs:
             data/derived/us-ce/round07/source_manifest.json
             data/derived/us-ce/round07/preliminary_y1_estimates.csv
             data/derived/us-ce/round07/audit_log.csv
+            data/derived/us-ce/round07/download.log
+            data/derived/us-ce/round07/download_exit_status.txt
             data/derived/us-ce/round07/execution.log
             data/derived/us-ce/round07/exit_status.txt
           if-no-files-found: warn
