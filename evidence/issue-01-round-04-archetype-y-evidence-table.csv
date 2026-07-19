@@ -1,0 +1,40 @@
+country,housing_state,metric,value,unit,reference_period,evidence_grade,citation_key,derivation_or_definition,limitations
+United States,all one-person 25-34,represented consumer units,5774,thousand consumer units,2021-2022,A-,bls2023oneperson2534,Published BLS weighted population count,Includes non-employed single-person consumer units
+United States,all one-person 25-34,average age,29.3,years,2021-2022,A-,bls2023oneperson2534,Mean reference-person age,Not a distribution
+United States,all one-person 25-34,average earners,0.9,persons,2021-2022,A-,bls2023oneperson2534,Mean earners per consumer unit,Does not restrict sample to employed workers
+United States,all one-person 25-34,income before taxes,57759,USD per year,2021-2022,A-,bls2023oneperson2534,Population mean,Mean rather than median
+United States,all one-person 25-34,income after taxes,49373,USD per year,2021-2022,A-,bls2023oneperson2534,Income before taxes less BLS personal-tax estimate,Does not deduct all payroll or pension contributions
+United States,all one-person 25-34,wages and salaries,53338,USD per year,2021-2022,A-,bls2023oneperson2534,Population mean,Includes zeros and does not isolate employed-only sample
+United States,all one-person 25-34,total expenditures,49125,USD per year,2021-2022,A-,bls2023oneperson2534,BLS consumer-expenditure definition,Includes pension and Social Security contributions
+United States,all one-person 25-34,housing expenditure,19191,USD per year,2021-2022,A-,bls2023oneperson2534,Population mean across all tenure states,Includes shelter utilities operations and furnishings
+United States,all one-person 25-34,housing share of after-tax income,38.9,percent,2021-2022,derived,bls2023oneperson2534,19191 divided by 49373,Ratio of two population means
+United States,all one-person 25-34,transportation expenditure,7775,USD per year,2021-2022,A-,bls2023oneperson2534,Population mean,Includes vehicle purchases as net outlay
+United States,all one-person 25-34,food expenditure,5747,USD per year,2021-2022,A-,bls2023oneperson2534,Population mean,Includes food at home and away
+United States,all one-person 25-34,healthcare expenditure,2017,USD per year,2021-2022,A-,bls2023oneperson2534,Population mean,Insurance and out-of-pocket categories
+United States,all one-person 25-34,pensions and Social Security,6129,USD per year,2021-2022,A-,bls2023oneperson2534,BLS expenditure category,Combines personal retirement saving and social-insurance contributions
+United States,all one-person 25-34,reported residual after total expenditures,248,USD per year,2021-2022,derived,bls2023oneperson2534,49373 minus 49125,Not a complete balance-sheet saving measure
+United States,all one-person 25-34,residual before pension and Social Security category,6377,USD per year,2021-2022,derived,bls2023oneperson2534,49373 minus 49125 plus 6129,Classification-sensitivity illustration only; not free cash
+United States,renter,renter share,76,percent of one-person 25-34 CUs,2021-2022,A-,bls2023oneperson2534,Published tenure distribution,Rounding may prevent shares summing exactly
+United States,owner with mortgage,mortgage-owner share,19,percent of one-person 25-34 CUs,2021-2022,A-,bls2023oneperson2534,Published tenure distribution,Does not report joint employment status
+United States,owner without mortgage,outright-owner share,6,percent of one-person 25-34 CUs,2021-2022,A-,bls2023oneperson2534,Published tenure distribution,Rounded
+United States,renter,conditional rented-dwelling expenditure proxy,14005,USD per renter CU per year,2021-2022,derived,bls2023oneperson2534,10644 all-group mean divided by 0.76 renter share,Assumes non-renters have zero rented-dwelling expenditure; mean not median
+United States,co-resident with parents,share living in parental home,16,percent of adults age 25-34,2024,B,census2024familiesliving,CPS living-arrangement estimate,Not restricted to single employed workers
+United States,family-supported,received outside-household expense help,47,percent of adults age 18-29,2025,B,fed2026shed,Received help with any listed expense,Age band differs from 25-34 prototype
+United States,family-supported,received housing-cost help,23,percent of adults age 18-29,2025,B,fed2026shed,Rent mortgage utilities or housing help,Age band differs from 25-34 prototype
+United States,all,three-month emergency savings,37,percent of adults age 18-29,2025,B,fed2026shed,Self-reported dedicated rainy-day fund,Age band differs and is not single-worker-only
+China,all residents,national per-capita disposable income,43377,CNY per person per year,2025,context,nbs2026income2025,Official national resident-household aggregate,Must not be assigned to prototype Y
+China,all residents,national per-capita consumption expenditure,29476,CNY per person per year,2025,context,nbs2026income2025,Official national resident-household aggregate,Must not be assigned to prototype Y
+China,microdata capability,CHFS sample size,22027,households,2021,D,chfs2026data2021,Public-data sample described by CHFS,Actual prototype values require files weights and codebook
+China,co-resident mechanism,counterfactual youth saving-rate reduction,21,percent lower,study data before 2019,C,rosenzweigzhang2019coresidence,Counterfactual if China house-price-to-income ratio matched United States,Mechanism estimate; not current national saving rate
+Australia,all income earners age 25-34,median total personal income,63382,AUD per year,2022-2023,B,abs2025personalincome,Administrative personal-income median,Not after-tax household income and not single-only
+Australia,all young adults age 16-34,renter share,43.47,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Age range wider than prototype and older reference year
+Australia,all young adults age 16-34,owner share,24.59,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Combines outright and mortgage ownership
+Australia,all young adults age 16-34,live with parents rent-free,27.88,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Age range wider than prototype
+Australia,all young adults age 16-34,live with parents and pay board,4.06,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Board includes accommodation and meals
+Australia,young adults age 30-34,owner share,49.57,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Not limited to single or childless adults
+Australia,young adults age 30-34,renter share,45.52,percent,2017,derived,chiaerol2022younghousing,100 minus 49.57 owner minus 3.80 free co-residence minus 1.11 board,Rounding-derived and not single-only
+Australia,young adults age 30-34,live with parents rent-free,3.80,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Not limited to single or employed adults
+Australia,young adults age 30-34,live with parents and pay board,1.11,percent,2017,B-,chiaerol2022younghousing,HILDA-derived individual tenure,Not limited to single or employed adults
+Australia,all occupied private dwellings,rented tenure,30.6,percent,2021,context,abs2022housingcensus,Census dwelling tenure,All ages; not youth distribution
+Australia,all occupied private dwellings,owned with mortgage,35,percent,2021,context,abs2022housingcensus,Census dwelling tenure,All ages; not youth distribution
+Australia,all occupied private dwellings,owned outright,31,percent,2021,context,abs2022housingcensus,Census dwelling tenure,All ages; not youth distribution
