@@ -1,0 +1,18 @@
+# Raw and restricted research data must never be committed.
+data/raw/
+data/restricted/
+
+# Reproducible derived outputs are reviewed before selective publication.
+data/derived/
+
+# Local Python environments and caches.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local analysis notebooks and editor files.
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
