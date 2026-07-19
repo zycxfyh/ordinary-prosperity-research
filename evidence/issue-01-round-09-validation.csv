@@ -1,0 +1,5 @@
+measure,pumd_estimate,official_2023_value,absolute_difference,percent_difference,validation_threshold_pct,status,interpretation
+food_at_home,6052.784905432291,6053.0,-0.2150945677085474,-0.003553520034837998,1.0,pass,Food source selection and annualization validated against official all-CU table.
+food_away_from_home,3932.526889523494,3933.0,-0.4731104765060081,-0.012029251881673364,1.0,pass,Food source selection and annualization validated against official all-CU table.
+food_total_integrated,9985.311794955785,9985.0,0.31179495578544447,0.0031226335081235845,1.0,pass,Food source selection and annualization validated against official all-CU table.
+partial_integrated_total_expenditure,73267.29748980579,77280.0,-4012.7025101942127,-5.192420432445932,,expected_block,Nonfood categories remain Interview-only; this is not an official integrated total.

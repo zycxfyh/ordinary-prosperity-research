@@ -1,0 +1,8 @@
+group,interviews,unique_cu,population,tenure_counts
+benchmark_all_one_person_25_34,903,560,6064816.982083334,"{""no_cash_rent"": 28, ""owner_with_mortgage"": 139, ""owner_without_mortgage"": 41, ""renter"": 693, ""student_housing"": 2}"
+y1_all,869,535,5795560.7645000005,"{""no_cash_rent"": 22, ""owner_with_mortgage"": 139, ""owner_without_mortgage"": 41, ""renter"": 667}"
+y1_renter,667,417,4499520.9015833335,"{""renter"": 667}"
+y1_owner_with_mortgage,139,84,917928.9666666667,"{""owner_with_mortgage"": 139}"
+y1_owner_without_mortgage,41,28,232448.62766666667,"{""owner_without_mortgage"": 41}"
+y1_no_cash_rent,22,16,145662.26858333332,"{""no_cash_rent"": 22}"
+y1_student_housing,0,0,0.0,{}
