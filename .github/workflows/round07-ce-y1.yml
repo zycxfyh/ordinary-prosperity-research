@@ -1,0 +1,62 @@
+name: Round 7 CE Y1 cloud run
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/round07-ce-y1.yml'
+      - 'analysis/us-ce/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  estimate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip pandas numpy
+
+      - name: Run preliminary CE Y1 estimate
+        run: |
+          python analysis/us-ce/round07_ce_y1.py \
+            --target-year 2023 \
+            --download \
+            --acknowledge-historical-tenure-codes \
+            --output-dir data/derived/us-ce/round07
+
+      - name: Verify outputs
+        run: |
+          test -s data/derived/us-ce/round07/source_manifest.json
+          test -s data/derived/us-ce/round07/preliminary_y1_estimates.csv
+          test -s data/derived/us-ce/round07/audit_log.csv
+          python - <<'PY'
+          import pandas as pd
+          p = 'data/derived/us-ce/round07/preliminary_y1_estimates.csv'
+          df = pd.read_csv(p)
+          print(df.to_string(index=False))
+          assert not df.empty
+          assert set(df['result_status']) == {'preliminary_interview_only'}
+          PY
+
+      - name: Upload aggregate-only artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: round07-ce-y1-preliminary
+          path: |
+            data/derived/us-ce/round07/source_manifest.json
+            data/derived/us-ce/round07/preliminary_y1_estimates.csv
+            data/derived/us-ce/round07/audit_log.csv
+          if-no-files-found: warn
+          retention-days: 7
