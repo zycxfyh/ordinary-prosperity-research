@@ -1,0 +1,7 @@
+attempt,platform,head_sha,workflow_run,status,stage,result,evidence
+1,GitHub Ubuntu,e521f1e5199e39becffa069fe5d5b20a39698bc5,29700961171,failure,setup-python,"pip cache requested without dependency file; research code not run","workflow logs"
+2,GitHub Ubuntu,3b903a2822233a6f168134e490a635bbcd6331de,29700994096,failure,data download,"Python urllib request to official BLS ZIP returned HTTP 403","workflow logs"
+3,GitHub Ubuntu,6b53b1888f8bbb01ef7b10c4b8e7c2cbbd75656c,29701045395,failure,data download,"diagnostic artifact captured HTTP 403 and exit status 22","artifact 8446453420"
+4,GitHub Ubuntu,1154ca78aad581fcaa209f4689d3a0f7d7df2afb,29701120509,failure,data download,"browser-style curl with User-Agent Referer Accept header and retries returned HTTP 403","artifact 8446473620"
+5,GitHub macOS,1abdc57215055132ecab0e7094b1056ca60c0a27,29701215472,failure,data download,"macOS runner with browser-style curl returned HTTP 403; exit status 56","artifact 8446501918"
+6,DataLumos/ICPSR,n/a,n/a,not-executed,alternative source,"2023 and 2022 project metadata found; file download requires Researcher Passport and/or access application","DOI 10.3886/E247740V1; DOI 10.3886/E247744V1"
