@@ -1,95 +1,52 @@
 # US Consumer Expenditure Survey analysis
 
-本目录保存 Issue #1 第六轮的美国 CE 微观分析实现。原始 BLS 数据不提交到仓库。
+本目录保存 Issue #1 及其子 Issue #4 的美国 CE 微观分析实现。原始 BLS 数据和官方二进制输入不提交到仓库。
 
-## 研究状态
+## 当前研究状态
 
 ```text
-source availability: public
-implementation: available
-current-session binary ingestion: blocked
-new estimates committed: no
+Round 6: Interview estimator implementation complete
+Round 7: cloud download boundary documented
+Round 8: real 2023 Interview Y1 estimates generated
+Round 9: Diary–Interview food integration validated against official totals
+Round 10: full-expenditure estimator and contract tests ready
+Round 10 official binary execution: not yet run
 ```
 
-脚本输出只能先标记为 `preliminary_interview_only`。通过变量字典、UCC source selection、收入插补和公开表验证后，才允许升级为 `validated`。
+结果状态必须逐项区分：
+
+- `preliminary_interview_only`：只使用 Interview；
+- `integrated_food_validated`：食品估计程序已复现官方全体结果；
+- `integrated_expenditure_validated`：完整支出程序通过 77,280 美元准入门；
+- `supported_preliminary_descriptive`：全体估计器通过后、RSE 可接受的子群描述性结果；
+- `blocked`：方法、来源、样本或验证尚不足。
 
 ## 环境
 
 ```bash
 python --version  # 3.11+
-python -m pip install pandas numpy
+python -m pip install pandas numpy openpyxl pytest
 ```
 
-## 执行
-
-在仓库根目录运行：
-
-```bash
-python analysis/us-ce/round06_ce_y1.py \
-  --target-year 2023 \
-  --download
-```
-
-第一次运行会下载官方 BLS CSV Interview 数据包：
+## 原始输入
 
 ```text
-data/raw/us-ce/intrvw22.zip
-data/raw/us-ce/intrvw23.zip
+data/raw/us-ce/
+├── intrvw22.zip
+├── intrvw23.zip
+├── diary22.zip
+├── diary23.zip
+├── stubs.zip
+└── ce_source_integrate.xlsx
 ```
 
-下载、解压并检查当前 BLS 字典中的 `CUTENURE` 后，再运行：
+- 2023 Interview 自然年需要 `intrvw22.zip` 与 `intrvw23.zip`；
+- 2023 Diary 主估计只需要 `diary23.zip`；
+- `diary22.zip`用于相邻年份敏感性；
+- `stubs.zip`提供 `CE-HG-Integ-2023.txt`；
+- source-selection workbook 作为独立版本证据摄取。
 
-```bash
-python analysis/us-ce/round06_ce_y1.py \
-  --target-year 2023 \
-  --acknowledge-historical-tenure-codes
-```
-
-脚本刻意要求第二次显式确认。历史住房代码来自 BLS 官方旧版字典，但每个发布年份仍必须以当期字典为准。
-
-## 输出
-
-默认写入：
-
-```text
-data/derived/us-ce/round06/
-├── source_manifest.json
-├── preliminary_y1_estimates.csv
-├── y1_sample_audit.csv
-└── audit_log.csv
-```
-
-### `source_manifest.json`
-
-记录：
-
-- BLS官方地址；
-- 发布年份；
-- 本地路径；
-- 文件大小；
-- SHA-256；
-- 解压目录。
-
-### `preliminary_y1_estimates.csv`
-
-按以下组别输出：
-
-- `all_y1`；
-- `renter`；
-- `owner_with_mortgage`；
-- `owner_without_mortgage`。
-
-每项指标包含：
-
-- 未加权访谈数；
-- 去重 consumer unit 数；
-- 加权总体；
-- 加权均值；
-- 加权 P25、中位数与 P75；
-- BRR 标准误和95%置信区间；
-- 结果状态。
-
-## Y1定义
+## Y1 定义
 
 ```text
 25 <= AGE_REF <= 34
@@ -97,11 +54,17 @@ FAM_SIZE == 1
 NO_EARNR >= 1
 ```
 
-这是**一人经济共享单位**，不必然表示住宅中独居。Consumer Expenditure Survey允许一个人与他人同住但保持财务独立时构成独立consumer unit。
+Y1 表示一人经济共享单位，不必然表示住宅中独居。
 
-## 自然年规则
+## 估计规则
 
-2023年需要两个相邻发布包。支出汇总变量按BLS规则组合：
+### Interview population
+
+```text
+Σ FINLWT21 / 4 × MO_SCOPE / 3
+```
+
+2023 自然年支出月份来自：
 
 ```text
 2023 Q1: CQ
@@ -109,32 +72,84 @@ NO_EARNR >= 1
 2024 Q1: PQ
 ```
 
-自然年分析权重：
+### Diary population
 
 ```text
-FINLWT21 / 4 × MO_SCOPE / 3
+Σ FINLWT21 / 4
 ```
+
+Diary EXPD 为周记录。Round 10 先乘 13 转为季度金额，再乘官方 integrated grouping factor。
+
+### 双调查整合
+
+Interview 与 Diary 是独立样本，不能连接 respondent records。每个 UCC 分别估计后，在估计量层面合并：
+
+```text
+combined mean = Interview mean + Diary mean
+combined SE   = sqrt(Interview SE² + Diary SE²)
+```
+
+## Round 9：食品整合
+
+```bash
+python analysis/us-ce/round09_diary_food_integration.py \
+  --interview-2022 data/raw/us-ce/intrvw22.zip \
+  --interview-2023 data/raw/us-ce/intrvw23.zip \
+  --diary-2022 data/raw/us-ce/diary22.zip \
+  --diary-2023 data/raw/us-ce/diary23.zip \
+  --output-dir data/derived/us-ce/round09
+```
+
+Round 9 已近乎精确复现 BLS 2023 全体 consumer units 的食品在家、外食和食品合计。
+
+## Round 10：全部支出整合
+
+先运行合成合同测试：
+
+```bash
+pytest -q tests/test_round10_full_expenditure_integration.py
+```
+
+再执行正式估计：
+
+```bash
+python analysis/us-ce/round10_full_expenditure_integration.py \
+  --interview-2022 data/raw/us-ce/intrvw22.zip \
+  --interview-2023 data/raw/us-ce/intrvw23.zip \
+  --diary-2023 data/raw/us-ce/diary23.zip \
+  --hierarchical-groupings data/raw/us-ce/stubs.zip \
+  --source-selection data/raw/us-ce/ce_source_integrate.xlsx \
+  --output-dir data/derived/us-ce/round10
+```
+
+Round 10 直接解析官方固定宽度 grouping 的：
+
+- UCC；
+- source；
+- annualization factor；
+- section；
+- hierarchy path。
+
+全体 consumer units 综合总支出必须在默认 ±1% 容差内复现 BLS 2023 官方值 77,280 美元，否则脚本非零退出，所有 Y1 细分继续阻断。详细协议见 `round10-data-intake.md`。
 
 ## 发布前强制检查
 
-1. 取得并保存当期BLS变量字典；
-2. 核对`CUTENURE`代码；
-3. 核对2023 FMLI errata已包含在数据包中；
-4. 确认12个月收入没有按访谈次数累加；
-5. 使用ITBI、NTAXI与收入插补文件复核收入；
-6. 使用hierarchical grouping和source-selection重建主要UCC；
-7. 解释Interview-only与综合CE正式表之间的差异；
-8. 对普通支出应用44个BRR权重；
-9. 对插补收入使用CE收入插补指南；
-10. 报告样本量、权重、零值、top-code、插补和不确定性。
+1. 保存全部输入字节数、SHA-256 与 ZIP 完整性；
+2. 核对 2023 FMLI errata；
+3. 确认 `CE-HG-Integ-2023.txt` 被唯一选中；
+4. 冲突 UCC source/factor 必须 fail closed；
+5. source-selection workbook 已摄取并记录结构；
+6. 44 个 BRR replicate weights 已用于普通支出；
+7. 报告样本量、加权总体、SE、RSE 与置信区间；
+8. 小样本住房组不得进入主结论；
+9. ITII 收入插补不确定性不得由普通 BRR 替代；
+10. 群体均值不得解释为个体现金账本或因果效应。
 
 ## 不提交的文件
 
-请不要将以下内容提交到Git：
-
 ```text
 data/raw/
-data/derived/us-ce/round06/*.csv
+data/derived/
 ```
 
-研究结果进入仓库时，应提交经过审查的汇总表、代码版本、来源manifest和方法说明，而不是包含微观记录的原始数据。
+研究分支只提交可复现代码、输入哈希、聚合结果、验证证据和方法说明。
