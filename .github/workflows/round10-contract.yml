@@ -1,0 +1,27 @@
+name: round10-contract
+
+on:
+  pull_request:
+    paths:
+      - "analysis/us-ce/round10_full_expenditure_integration.py"
+      - "tests/test_round10_full_expenditure_integration.py"
+      - ".github/workflows/round10-contract.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependencies
+        run: python -m pip install --disable-pip-version-check pandas numpy openpyxl pytest
+      - name: Compile estimator
+        run: python -m py_compile analysis/us-ce/round10_full_expenditure_integration.py
+      - name: Run synthetic contract tests
+        run: pytest -q tests/test_round10_full_expenditure_integration.py
